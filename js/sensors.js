@@ -14,7 +14,7 @@ const sensors = {
       <p><strong>Humidity</strong><span style="float: right">value: {{ humidity }}%</span></p>
       <input v-model="humidity" type="range" class="form-range" min="0" max="100">
       <hr />
-      <button @click="sendData(token, id, temperature, humidity)" class="btn btn-primary">Send Data</button>
+      <button @click="sendData()" :disabled="isOpen" class="btn btn-primary">Open Channel</button>
     </div>
   `,
 
@@ -23,17 +23,21 @@ const sensors = {
     const id = ref(1);
     const temperature = ref(21);
     const humidity = ref(40);
+    const isOpen = ref(false);
 
-    const sendData = (token, id, temperature, humidity) => {
+    const sendData = () => {
+      isOpen.value = true;
       try {
-        fetch("https://demo.cioty.com/sensors", {
-          method: "POST",
-          body: `token=${token}&objectID=${id}&id=${id}&temp=${temperature}&hum=${humidity}`,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Synx-Cat": "1"
-          }
-        });
+        setInterval(() => {
+          fetch("https://demo.cioty.com/sensors", {
+            method: "POST",
+            body: `token=${token.value}&objectID=${id.value}&id=${id.value}&temp=${temperature.value}&hum=${humidity.value}`,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Synx-Cat": "1"
+            }
+          });
+        }, 5000)
       } catch (error) {
         console.error("Error", error);
       }
@@ -44,6 +48,7 @@ const sensors = {
       id,
       temperature,
       humidity,
+      isOpen,
       sendData
     };
   }
