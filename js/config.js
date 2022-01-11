@@ -1,1 +1,1 @@
-const { ref } = Vue;
+const { ref, computed } = Vue;
